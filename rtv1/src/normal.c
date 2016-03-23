@@ -1,0 +1,57 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   normal.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bgantelm <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/03/21 12:34:19 by bgantelm          #+#    #+#             */
+/*   Updated: 2016/03/21 15:35:12 by bgantelm         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <rtv1.h>
+
+double		ft_normale2(t_ray *impact, t_object *object)
+{
+	return (2 * (impact->o->y - object->o->y) - (2 * object->d->y
+	* (object->d->x * (impact->o->x - object->o->x) + object->d->z
+	* (impact->o->z - object->o->z) + object->d->y
+	* (impact->o->y - object->o->y))) / (pow(object->d->z, 2) +
+	pow(object->d->y, 2) + pow(object->d->x, 2)));
+}
+
+double		ft_normale(t_ray *impact, t_object *object)
+{
+	return (2 * (impact->o->x - object->o->x) - (2 * object->d->x *
+		(object->d->x * (impact->o->x - object->o->x) + object->d->z *
+		(impact->o->z - object->o->z) + object->d->y * (impact->o->y
+			- object->o->y))) / (pow(object->d->z, 2)
+		+ pow(object->d->y, 2) + pow(object->d->x, 2)));
+}
+
+void		find_normal(t_ray *impact, t_object *object)
+{
+	if (object->type == SPHERE)
+		impact->d = vectorsub(impact->o, object->o);
+	else if (object->type == PLAN)
+		impact->d = vectorcopy(object->d);
+	else if (object->type == CONE)
+	{
+		impact->d = malloc(sizeof(t_pos));
+		impact->d->x = impact->o->x - object->o->x;
+		impact->d->y = 0;
+		impact->d->z = impact->o->z - object->o->z;
+	}
+	else if (object->type == CYL)
+	{
+		impact->d = malloc(sizeof(t_pos));
+		impact->d->x = ft_normale(impact, object);
+		impact->d->y = ft_normale2(impact, object);
+		impact->d->z = 2 * (impact->o->z - object->o->z) - (2 * object->d->z
+		* (object->d->x * (impact->o->x - object->o->x) + object->d->z
+		* (impact->o->z - object->o->z) + object->d->y * (impact->o->y
+		- object->o->y))) / (pow(object->d->z, 2) + pow(object->d->y, 2)
+		+ pow(object->d->x, 2));
+	}
+}

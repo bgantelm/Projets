@@ -1,0 +1,8 @@
+*.o
+*.a
+*.swp
+*~
+42sh
+DEBUG
+.history
+42sh.dSYM/
